@@ -35,7 +35,7 @@ def start(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
         'Hi! I will do my best to recommend a place to eat. '
         'Send /start to start from the top or /cancel to stop.\n\n'
-        'Firstly, send me your location please',
+        'Firstly, send me your location please! You can do so by tapping the paperclip icon and selecting location. \n',
     )
     user = update.message.from_user
     logger.info(f'Preference of {user.first_name}: {update.message.text}')
@@ -64,7 +64,7 @@ def location(update: Update, context: CallbackContext) -> int:
         f'It has a rating of {first_place.get("rating")} and it is located at {first_place.get("vicinity")}\n'
         f'Here is the URL: {url}\n'
     )
-    return ConversationHandler.END
+    return LOCATION
 
 
 def skip_location(update: Update, context: CallbackContext) -> int:
