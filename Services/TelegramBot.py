@@ -3,6 +3,8 @@ import keys
 import json
 
 from Services.GooglePlaces import nearyby_search
+from Services.ResultParser import parse_results
+from Services.generator import generate_URL_from_place_id
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
     Updater,
@@ -15,7 +17,7 @@ from telegram.ext import (
 
 # Enable logging and writing to a log file
 logging.basicConfig(
-    filename="log.txt",
+    filename="../log.txt",
     filemode='a',
 
     format=u'%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -48,12 +50,20 @@ def location(update: Update, context: CallbackContext) -> int:
         "Location of %s: %f / %f", user.first_name, user_location.latitude, user_location.longitude
     )
     location = f'{user_location.latitude},{user_location.longitude}'
-    response = nearyby_search(location, {})
-    logger.info("Response: %s", json.dumps(response))
+    result_list = nearyby_search(location, {})
+    logger.info(u'\n'.join(json.dumps(d) for d in result_list))
     update.message.reply_text(
         'Querying google places api...'
     )
+    sorted_places = parse_results(result_list)
 
+    first_place = sorted_places[0]
+    url = generate_URL_from_place_id(first_place.get('place_id'))
+    update.message.reply_text(
+        f'Check out {first_place.get("name")}! \n'
+        f'It has a rating of {first_place.get("rating")} and it is located at {first_place.get("vicinity")}\n'
+        f'Here is the URL: {url}\n'
+    )
     return ConversationHandler.END
 
 

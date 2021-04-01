@@ -6,10 +6,10 @@ import logging
 
 # Enable logging
 logging.basicConfig(
-    filename="log.txt",
+    filename="../log.txt",
     filemode='a',
     format=u'%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    level=logging.INFO,
 )
 
 logger = logging.getLogger(__name__)
@@ -33,11 +33,19 @@ def nearyby_search(location: str, parameters: dict) -> json:
 
     logger.info("querying: %s", url)
     response = requests.get(url)
-    logger.info("Response: %s", response.text)
+
     response_json = response.json()
+    response_json = convert(response_json)
 
-    print("HELLO")
-    print(response_json.get("results"))
+    result_list = response_json.get("results")
+    return result_list
 
-    return response
 
+def convert(obj):
+    if isinstance(obj, bool):
+        return str(obj).lower()
+    if isinstance(obj, (list, tuple)):
+        return [convert(item) for item in obj]
+    if isinstance(obj, dict):
+        return {convert(key): convert(value) for key, value in obj.items()}
+    return obj
