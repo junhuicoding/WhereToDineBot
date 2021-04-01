@@ -24,6 +24,7 @@ Run it!
 - A more robust recommendation system that allows user to reject current recommendation, and generate a new one
 - Allow parameters such as type of food and radius of search
 - Through a database, allow storing of visited places to improve future recommendations
+- Dockerise it for easier deployment
 - Improve logger to parse UTF-16 chars
 
 
